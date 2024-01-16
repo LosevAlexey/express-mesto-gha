@@ -38,4 +38,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 
+/* app.get('*',function(req,res){
+  res.render('404');
+}
+); */
+
+router.get('*', route)
+
 // {"_id":{"$oid":"62320672921704468e5ed5bf"},
