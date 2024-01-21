@@ -24,6 +24,8 @@ module.exports.getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new CastError("Некорректный id"));
+      } else {
+        next(err);
       }
     });
 };
@@ -35,6 +37,8 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(new ValidationError("Переданы некорректные данные"));
+      } else {
+        next(err);
       }
     });
 };
@@ -81,6 +85,8 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new CastError("Переданы некорректные данные"));
+      } else {
+        next(err);
       }
     });
 };

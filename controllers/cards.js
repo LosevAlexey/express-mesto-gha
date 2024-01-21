@@ -2,6 +2,7 @@ const Card = require("../models/card");
 
 const ValidationError = require("../constants/ValidationError");
 const CastError = require("../constants/CastError");
+const NotFoundError = require("../constants/NotFoundError");
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
@@ -30,7 +31,11 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      } else {
+        next(new NotFoundError("Карточка не найдена"));
+      }
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -46,6 +51,13 @@ module.exports.likeCard = (req, res, next) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      } else {
+        next(new NotFoundError("Карточка не найдена"));
+      }
+    })
   ).catch((err) => {
     if (err.name === "CastError") {
       next(new CastError("Некорректный id"));
@@ -60,6 +72,13 @@ module.exports.dislikeCard = (req, res, next) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true }
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      } else {
+        next(new NotFoundError("Карточка не найдена"));
+      }
+    })
   ).catch((err) => {
     if (err.name === "CastError") {
       next(new CastError("Некорректный id"));
