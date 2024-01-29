@@ -22,9 +22,13 @@ app.use((req, res, next) => {
 const bodyParser = require("body-parser");
 const routerUsers = require("./routes/users");
 const routerCards = require("./routes/cards");
+const { login, createUser } = require("../controllers/users");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use("/users", routerUsers);
 app.use("/cards", routerCards);
