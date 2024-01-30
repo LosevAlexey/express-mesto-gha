@@ -1,6 +1,5 @@
 const Card = require("../models/card");
 
-const ValidationError = require("../constants/ValidationError");
 const CastError = require("../constants/CastError");
 const NotFoundError = require("../constants/NotFoundError");
 
@@ -20,8 +19,8 @@ module.exports.createCard = (req, res, next) => {
       res.status(201).send({ data: card });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(new ValidationError("Переданы некорректные данные"));
+      if (err.name === "CastError") {
+        next(new CastError("Переданы некорректные данные"));
       } else {
         next(err);
       }

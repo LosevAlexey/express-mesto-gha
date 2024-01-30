@@ -2,18 +2,15 @@ const bcrypt = require('bcryptjs');
 const User = require("../models/user");
 const jwt = require('jsonwebtoken');
 
-const ValidationError = require("../constants/ValidationError");
 const NotFoundError = require("../constants/NotFoundError");
 const CastError = require("../constants/CastError");
 const ConflictError = require('../constants/ConflictError');
 const AuthError = require('../constants/AuthError');
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((result) => res.send(result))
-    .catch((err) => {
-      res.status(500).send({ message: `Ошибка ${err}` });
-    });
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -40,8 +37,8 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({ name, about, avatar, email, password: hash }))
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(new ValidationError("Переданы некорректные данные"));
+      if (err.name === "CastError") {
+        next(new CastError("Переданы некорректные данные"));
       } else if (err.code === 11000) {
         next(new ConflictError(`Такой e-mail уже зарегистрирован`));
       } else {
@@ -67,8 +64,6 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new CastError("Переданы некорректные данные"));
-      } else if (err.name === "ValidationError") {
-        next(new ValidationError("Переданы некорректные данные"));
       } else {
         next(err);
       }
@@ -89,13 +84,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
         next(new NotFoundError("Пользователь не найден"));
       }
     })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new CastError("Переданы некорректные данные"));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
@@ -109,9 +98,7 @@ module.exports.login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch(() => {
-      next(new AuthError('Почта или пароль введены неправильно'));
-    });
+    .catch(next);
 };
 
 module.exports.getUserInfo = (req, res, next) => {
@@ -124,11 +111,5 @@ module.exports.getUserInfo = (req, res, next) => {
         next(new NotFoundError('Пользователь не найден'));
       }
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new CastError('Переданы некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };

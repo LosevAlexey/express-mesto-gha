@@ -19,13 +19,12 @@ app.use((req, res, next) => {
   next();
 });
 
-const bodyParser = require("body-parser");
 const routerUsers = require("./routes/users");
 const routerCards = require("./routes/cards");
 const { login, createUser } = require("../controllers/users");
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.post('/signin', login);
 app.post('/signup', createUser);
