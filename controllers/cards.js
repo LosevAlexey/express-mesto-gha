@@ -3,12 +3,10 @@ const Card = require("../models/card");
 const CastError = require("../constants/CastError");
 const NotFoundError = require("../constants/NotFoundError");
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((result) => res.send(result))
-    .catch((err) => {
-      res.status(500).send({ message: `Ошибка ${err}` });
-    });
+    .catch(next);
 };
 
 module.exports.createCard = (req, res, next) => {
