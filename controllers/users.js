@@ -37,7 +37,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({ name, about, avatar, email, password: hash }))
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         next(new CastError("Переданы некорректные данные"));
       } else if (err.code === 11000) {
         next(new ConflictError(`Такой e-mail уже зарегистрирован`));
@@ -62,7 +62,7 @@ module.exports.updateUser = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         next(new CastError("Переданы некорректные данные"));
       } else {
         next(err);
