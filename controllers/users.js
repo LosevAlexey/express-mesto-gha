@@ -84,7 +84,13 @@ module.exports.updateUserAvatar = (req, res, next) => {
         next(new NotFoundError("Пользователь не найден"));
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new CastError("Переданы некорректные данные"));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.login = (req, res, next) => {
