@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const NotFoundError = require("../constants/NotFoundError");
 const CastError = require("../constants/CastError");
-const ConflictError = require('../constants/ConflictError');
-const AuthError = require('../constants/AuthError');
+const ConflictError = require("../constants/ConflictError");
+const AuthError = require("../constants/AuthError");
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
@@ -40,7 +40,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new CastError("Переданы некорректные данные"));
       } else if (err.code === 11000) {
-        next(new ConflictError(`Такой e-mail уже зарегистрирован`));
+        next(new ConflictError("Такой e-mail уже зарегистрирован"));
       } else {
         next(err);
       }
@@ -114,7 +114,7 @@ module.exports.getUserInfo = (req, res, next) => {
       if (user) {
         res.send({ data: user });
       } else {
-        next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError("Пользователь не найден"));
       }
     })
     .catch(next);
